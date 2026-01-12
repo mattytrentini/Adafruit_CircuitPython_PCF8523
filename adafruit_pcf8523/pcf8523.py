@@ -47,32 +47,19 @@ Implementation Notes
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 
-try:
-    # MicroPython
-    from .register_helpers import (
-        I2CDevice,
-        RWBit,
-        ROBit,
-        RWBits,
-        BCDDateTimeRegister,
-        BCDAlarmTimeRegister,
-    )
-except ImportError:
-    # CircuitPython fallback
-    from adafruit_bus_device.i2c_device import I2CDevice
-    from adafruit_register.i2c_bit import RWBit, ROBit
-    from adafruit_register.i2c_bits import RWBits
-    from adafruit_register.i2c_bcd_datetime import BCDDateTimeRegister
-    from adafruit_register.i2c_bcd_alarm import BCDAlarmTimeRegister
+from machine import I2C
+from .register_helpers import (
+    I2CDevice,
+    RWBit,
+    ROBit,
+    RWBits,
+    BCDDateTimeRegister,
+    BCDAlarmTimeRegister,
+)
 
 try:
     import typing
     from time import struct_time
-
-    try:
-        from busio import I2C
-    except ImportError:
-        from machine import I2C
 except ImportError:
     pass
 

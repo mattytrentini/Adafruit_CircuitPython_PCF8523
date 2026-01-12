@@ -52,22 +52,11 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 
 import time
 from micropython import const
-
-try:
-    # MicroPython
-    from .register_helpers import I2CDevice, RWBits
-except ImportError:
-    # CircuitPython fallback
-    from adafruit_bus_device.i2c_device import I2CDevice
-    from adafruit_register.i2c_bits import RWBits
+from machine import I2C
+from .register_helpers import I2CDevice, RWBits
 
 try:
     from typing import Union
-
-    try:
-        from busio import I2C
-    except ImportError:
-        from machine import I2C
 except ImportError:
     pass
 
