@@ -8,12 +8,21 @@
 
 import time
 
-import board
+try:
+    # CircuitPython
+    import board
+    i2c = board.I2C()  # uses board.SCL and board.SDA
+    # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector
+except ImportError:
+    # MicroPython
+    from machine import I2C, Pin
+    # Adjust pin numbers for your board (these are common defaults)
+    # For ESP32: SCL=22, SDA=21
+    # For RP2040: SCL=5, SDA=4 (or SCL=27, SDA=26)
+    i2c = I2C(0, scl=Pin(22), sda=Pin(21), freq=400000)
 
 from adafruit_pcf8523.pcf8523 import PCF8523
 
-i2c = board.I2C()  # uses board.SCL and board.SDA
-# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 rtc = PCF8523(i2c)
 
 # Lookup table for names of days (nicer printing).

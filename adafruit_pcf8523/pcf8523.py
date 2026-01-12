@@ -47,14 +47,32 @@ Implementation Notes
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 
-from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register import i2c_bcd_alarm, i2c_bcd_datetime, i2c_bit, i2c_bits
+try:
+    # MicroPython
+    from .register_helpers import (
+        I2CDevice,
+        RWBit,
+        ROBit,
+        RWBits,
+        BCDDateTimeRegister,
+        BCDAlarmTimeRegister,
+    )
+except ImportError:
+    # CircuitPython fallback
+    from adafruit_bus_device.i2c_device import I2CDevice
+    from adafruit_register.i2c_bit import RWBit, ROBit
+    from adafruit_register.i2c_bits import RWBits
+    from adafruit_register.i2c_bcd_datetime import BCDDateTimeRegister
+    from adafruit_register.i2c_bcd_alarm import BCDAlarmTimeRegister
 
 try:
     import typing
     from time import struct_time
 
-    from busio import I2C
+    try:
+        from busio import I2C
+    except ImportError:
+        from machine import I2C
 except ImportError:
     pass
 
@@ -100,45 +118,45 @@ class PCF8523:
 
     """
 
-    lost_power = i2c_bit.RWBit(0x03, 7)
+    lost_power = RWBit(0x03, 7)
     """True if the device has lost power since the time was set."""
 
-    power_management = i2c_bits.RWBits(3, 0x02, 5)
+    power_management = RWBits(3, 0x02, 5)
     """Power management state that dictates battery switchover, power sources
     and low battery detection. Defaults to BATTERY_SWITCHOVER_OFF (0b111)."""
 
     # The False means that day comes before weekday in the registers. The 0 is
     # that the first day of the week is value 0 and not 1.
-    datetime_register = i2c_bcd_datetime.BCDDateTimeRegister(0x03, False, 0)
+    datetime_register = BCDDateTimeRegister(0x03, False, 0)
     """Current date and time."""
 
     # The False means that day and weekday share a register. The 0 is that the
     # first day of the week is value 0 and not 1.
-    alarm = i2c_bcd_alarm.BCDAlarmTimeRegister(
+    alarm = BCDAlarmTimeRegister(
         0x0A, has_seconds=False, weekday_shared=False, weekday_start=0
     )
     """Alarm time for the first alarm. Note that the value of the seconds-fields
     is ignored, i.e. alarms only fire at full minutes. For short-term
     alarms, use a timer instead."""
 
-    alarm_interrupt = i2c_bit.RWBit(0x00, 1)
+    alarm_interrupt = RWBit(0x00, 1)
     """True if the interrupt pin will output when alarm is alarming."""
 
-    alarm_status = i2c_bit.RWBit(0x01, 3)
+    alarm_status = RWBit(0x01, 3)
     """True if alarm is alarming. Set to False to reset."""
 
-    battery_low = i2c_bit.ROBit(0x02, 2)
+    battery_low = ROBit(0x02, 2)
     """True if the battery is low and should be replaced."""
 
-    high_capacitance = i2c_bit.RWBit(0x00, 7)
+    high_capacitance = RWBit(0x00, 7)
     """True for high oscillator capacitance (12.5pF), otherwise lower (7pF)"""
 
-    calibration_schedule_per_minute = i2c_bit.RWBit(0x0E, 7)
+    calibration_schedule_per_minute = RWBit(0x0E, 7)
     """False to apply the calibration offset every 2 hours (1 LSB = 4.340ppm);
     True to offset every minute (1 LSB = 4.069ppm).  The default, False,
     consumes less power.  See datasheet figures 28-31 for details."""
 
-    calibration = i2c_bits.RWBits(7, 0xE, 0, signed=True)
+    calibration = RWBits(7, 0xE, 0, signed=True)
     """Calibration offset to apply, from -64 to +63.  See the PCF8523 datasheet
     figure 18 for the offset calibration calculation workflow."""
 

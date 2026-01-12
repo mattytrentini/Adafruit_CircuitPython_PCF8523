@@ -51,15 +51,23 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 
 import time
-
-from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register import i2c_bits
 from micropython import const
+
+try:
+    # MicroPython
+    from .register_helpers import I2CDevice, RWBits
+except ImportError:
+    # CircuitPython fallback
+    from adafruit_bus_device.i2c_device import I2CDevice
+    from adafruit_register.i2c_bits import RWBits
 
 try:
     from typing import Union
 
-    from busio import I2C
+    try:
+        from busio import I2C
+    except ImportError:
+        from machine import I2C
 except ImportError:
     pass
 
@@ -70,7 +78,7 @@ class Clock:
     :param I2C i2c_bus: The I2C bus object
     """
 
-    clockout_frequency = i2c_bits.RWBits(3, 0x0F, 3)  # COF[2:0]
+    clockout_frequency = RWBits(3, 0x0F, 3)  # COF[2:0]
     """Clock output frequencies generated. Default is 32.768kHz.
     Possible values are as shown (selection value - frequency).
     000 - 32.768khz

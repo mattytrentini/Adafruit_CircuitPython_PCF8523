@@ -55,15 +55,24 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 
 import time
-
-from adafruit_bus_device.i2c_device import I2CDevice
-from adafruit_register import i2c_bit, i2c_bits
 from micropython import const
+
+try:
+    # MicroPython
+    from .register_helpers import I2CDevice, RWBit, RWBits
+except ImportError:
+    # CircuitPython fallback
+    from adafruit_bus_device.i2c_device import I2CDevice
+    from adafruit_register.i2c_bit import RWBit
+    from adafruit_register.i2c_bits import RWBits
 
 try:
     from typing import Union
 
-    from busio import I2C
+    try:
+        from busio import I2C
+    except ImportError:
+        from machine import I2C
 except ImportError:
     pass
 
@@ -74,7 +83,7 @@ class Timer:
     :param I2C i2c_bus: The I2C bus object
     """
 
-    timer_enabled = i2c_bits.RWBits(2, 0x0F, 1)  # TAC[1:0]
+    timer_enabled = RWBits(2, 0x0F, 1)  # TAC[1:0]
     """Configures timer. Possible values:
     00 - disabled
     01 - enabled as countdown timer
@@ -82,7 +91,7 @@ class Timer:
     11 - disabled
     """
 
-    timer_frequency = i2c_bits.RWBits(3, 0x10, 0)  # TAQ[2:0]
+    timer_frequency = RWBits(3, 0x10, 0)  # TAQ[2:0]
     """TimerA clock frequency. Default is 1/3600Hz.
     Possible values are as shown (selection value - frequency).
     000 - 4.096kHz
@@ -103,7 +112,7 @@ class Timer:
     TIMER_FREQ_1_3600HZ = const(0b111)
     """Timer frequency of 1/3600 Hz"""
 
-    timer_value = i2c_bits.RWBits(8, 0x11, 0)  # T_A[7:0]
+    timer_value = RWBits(8, 0x11, 0)  # T_A[7:0]
     """ TimerA value (0-255). The default is undefined.
     The total countdown duration is calcuated by
     timer_value/timer_frequency. For a higher precision, use higher values
@@ -112,25 +121,25 @@ class Timer:
     latter will give better results. See the PCF85x3 User's Manual
     for details."""
 
-    timer_interrupt = i2c_bit.RWBit(0x01, 1)  # CTAIE
+    timer_interrupt = RWBit(0x01, 1)  # CTAIE
     """True if the interrupt pin will assert when timer has elapsed.
     Defaults to False."""
 
-    timer_watchdog = i2c_bit.RWBit(0x01, 2)  # WTAIE
+    timer_watchdog = RWBit(0x01, 2)  # WTAIE
     """True if the interrupt pin will output when timer generates a
     watchdog-alarm. Defaults to False."""
 
-    timer_status = i2c_bit.RWBit(0x01, 6)  # CTAF
+    timer_status = RWBit(0x01, 6)  # CTAF
     """True if timer has elapsed. Set to False to reset."""
 
-    timer_pulsed = i2c_bit.RWBit(0x0F, 7)  # TAM
+    timer_pulsed = RWBit(0x0F, 7)  # TAM
     """True if timer asserts INT as a pulse. The default
     value False asserts INT permanently."""
 
-    timerB_enabled = i2c_bit.RWBit(0x0F, 0)  # TBC
+    timerB_enabled = RWBit(0x0F, 0)  # TBC
     """True if the timerB is enabled. Default is False."""
 
-    timerB_frequency = i2c_bits.RWBits(3, 0x12, 0)  # TBQ[2:0]
+    timerB_frequency = RWBits(3, 0x12, 0)  # TBQ[2:0]
     """TimerB clock frequency. Default is 1/3600Hz.
     Possible values are as shown (selection value - frequency).
     000 - 4.096kHz
@@ -140,7 +149,7 @@ class Timer:
     111 -  1/3600Hz
     """
 
-    timerB_value = i2c_bits.RWBits(8, 0x13, 0)  # T_B[7:0]
+    timerB_value = RWBits(8, 0x13, 0)  # T_B[7:0]
     """ TimerB value (0-255). The default is undefined.
     The total countdown duration is calcuated by
     timerB_value/timerB_frequency. For a higher precision, use higher values
@@ -149,14 +158,14 @@ class Timer:
     latter will give better results. See the PCF85x3 User's Manual
     for details."""
 
-    timerB_interrupt = i2c_bit.RWBit(0x01, 0)  # CTBIE
+    timerB_interrupt = RWBit(0x01, 0)  # CTBIE
     """True if the interrupt pin will assert when timerB has elapsed.
     Defaults to False."""
 
-    timerB_status = i2c_bit.RWBit(0x01, 5)  # CTBF
+    timerB_status = RWBit(0x01, 5)  # CTBF
     """True if timerB has elapsed. Set to False to reset."""
 
-    timerB_pulsed = i2c_bit.RWBit(0x0F, 6)  # TBM
+    timerB_pulsed = RWBit(0x0F, 6)  # TBM
     """True if timerB asserts INT as a pulse. The default
     value False asserts INT permanently."""
 
