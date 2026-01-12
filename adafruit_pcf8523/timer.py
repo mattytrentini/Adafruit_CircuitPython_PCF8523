@@ -57,7 +57,9 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 import time
 from micropython import const
 from machine import I2C
-from .register_helpers import I2CDevice, RWBit, RWBits
+from adafruit_register.i2c_device import I2CDevice
+from adafruit_register.i2c_bit import RWBit
+from adafruit_register.i2c_bits import RWBits
 
 try:
     from typing import Union

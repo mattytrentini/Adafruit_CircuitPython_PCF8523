@@ -1,0 +1,9 @@
+{
+  "urls": [
+    ["github:mattytrentini/micropython-adafruit-pcf8523", "latest"]
+  ],
+  "deps": [
+    ["github:mattytrentini/adafruit_micropython_register", "latest"]
+  ],
+  "version": "1.0.0"
+}

@@ -48,14 +48,11 @@ __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_PCF8523.git"
 
 from machine import I2C
-from .register_helpers import (
-    I2CDevice,
-    RWBit,
-    ROBit,
-    RWBits,
-    BCDDateTimeRegister,
-    BCDAlarmTimeRegister,
-)
+from adafruit_register.i2c_device import I2CDevice
+from adafruit_register.i2c_bit import RWBit, ROBit
+from adafruit_register.i2c_bits import RWBits
+from adafruit_register.i2c_bcd_datetime import BCDDateTimeRegister
+from adafruit_register.i2c_bcd_alarm import BCDAlarmTimeRegister
 
 try:
     import typing
